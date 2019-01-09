@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Test github OAuth 2.0 with passport",
   "main": "main.js",
+  "scripts": {
+    "start": "nodemon main.js"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
