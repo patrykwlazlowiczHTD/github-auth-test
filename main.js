@@ -19,8 +19,8 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 const port = 4100;
-const GITHUB_CLIENT_ID = '0271694887d9a608dcd4';
-const GITHUB_CLIENT_SECRET = 'ba947565ddd4833aeb1a3830a0a3b65abd12c9ad';
+const GITHUB_CLIENT_ID = '46cd8365e525e9c25d44';
+const GITHUB_CLIENT_SECRET = '9ae7aad707674bf89e08f201529b3ec63b6f0513';
 let user = {
     token: null,
     githubProfile: null
