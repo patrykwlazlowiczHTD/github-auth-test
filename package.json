@@ -1,0 +1,29 @@
+{
+  "name": "github-auth-test",
+  "version": "1.0.0",
+  "description": "Test github OAuth 2.0 with passport",
+  "main": "main.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "lodash": "^4.17.11",
+    "morgan": "^1.9.1",
+    "passport": "^0.4.0",
+    "passport-github": "^1.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patrykwlazlowiczHTD/github-auth-test.git"
+  },
+  "author": "Patryk Wlazłowicz for HTD",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patrykwlazlowiczHTD/github-auth-test/issues"
+  },
+  "homepage": "https://github.com/patrykwlazlowiczHTD/github-auth-test#readme"
+}
