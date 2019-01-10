@@ -10,8 +10,5 @@
   "formation": {
   },
   "name": "github-auth-test",
-  "scripts": {
-    "postdeploy": "npm run start:heroku"
-  },
   "stack": "heroku-18"
 }

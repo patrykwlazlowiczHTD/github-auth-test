@@ -4,7 +4,8 @@
   "description": "Test github OAuth 2.0 with passport",
   "main": "main.js",
   "scripts": {
-    "start": "nodemon main.js"
+    "start": "node main.js",
+    "start:dev": "nodemon main.js"
   },
   "dependencies": {
     "@octokit/graphql": "^2.0.1",

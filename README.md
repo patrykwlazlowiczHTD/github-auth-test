@@ -22,7 +22,7 @@ Install dependencies
 
 Launch application
 
-    npm start
+    npm run start:dev
 
 Test application
     
