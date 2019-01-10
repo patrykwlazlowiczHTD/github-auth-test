@@ -6,11 +6,12 @@ const bodyParser = require('body-parser');
 const expressSession = require('express-session');
 const morgan = require('morgan');
 const _ = require('lodash');
+const graphql = require('@octokit/graphql');
 
 const app = express();
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(expressSession({
     secret: 'keyboard cat',
     resave: true,
@@ -37,21 +38,39 @@ passport.use(new GitHubStrategy({
         return cb(null, profile);
     }
 ));
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     done(null, user);
 });
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(function (user, done) {
     done(null, user);
 });
 
 app.get('/', (req, res) => {
     if (req.user) {
-        res.json(user);
+        graphql(`{
+            viewer {
+                repositories(first: 10) {
+                    edges {
+                        node {
+                            name
+                        }
+                    }
+                }
+            }
+        }`, {
+            headers: {
+                authorization: `token ${user.token}`
+            }
+        }).then((data) =>{
+            user.githubProfile.repositories = _.map(data.viewer.repositories.edges, 'node.name');
+            res.json(user);
+        });
     } else {
         res.redirect('/auth/github');
     }
-});
+})
+;
 app.get('/loginFailure', (req, res) => res.status(403).json({status: 403}));
 app.get('/auth/github', passport.authenticate('github'));
-app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/loginFailure' }), (req, res) => res.redirect('/'));
+app.get('/auth/github/callback', passport.authenticate('github', {failureRedirect: '/loginFailure'}), (req, res) => res.redirect('/'));
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
