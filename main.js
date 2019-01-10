@@ -19,7 +19,7 @@ app.use(expressSession({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-const APP_PORT = process.env.APP_PORT || 4100;
+const APP_PORT = process.env.PORT || 4100;
 const APP_URL = process.env.APP_URL || 'http://127.0.0.1';
 const GITHUB_CLIENT_CALLBACK = process.env.APP_URL ? `${APP_URL}auth/github/callback` : `${APP_URL}:${APP_PORT}/auth/github/callback`;
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || '46cd8365e525e9c25d44';
@@ -75,4 +75,4 @@ app.get('/', (req, res) => {
 app.get('/loginFailure', (req, res) => res.status(403).json({status: 403}));
 app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/github/callback', passport.authenticate('github', {failureRedirect: '/loginFailure'}), (req, res) => res.redirect('/'));
-app.listen(APP_PORT, () => console.log(`Example app listening on port ${APP_PORT}!`));
+app.listen(APP_PORT, '0.0.0.0', () => console.log(`Example app listening on port ${APP_PORT}!`));
