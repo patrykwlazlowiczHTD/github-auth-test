@@ -27,3 +27,7 @@ Launch application
 Test application
     
 [Sign in with github](http://localhost:4100)
+
+Live demo
+
+[Demo](https://github-auth-test-dev.herokuapp.com)
