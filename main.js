@@ -10,7 +10,8 @@ const graphql = require('@octokit/graphql');
 const util = require('util');
 
 const pullRequestQueryPart = require('./queries-part/pull-request');
-const repositoriesContributedTo = require('./queries-part/repositories-contributed-to');
+const repositoriesContributedToQueryPart = require('./queries-part/repositories-contributed-to');
+const repositoriesQueryPart = require('./queries-part/repositories');
 
 const app = express();
 app.use(morgan('dev'));
@@ -56,7 +57,8 @@ app.get('/', (req, res) => {
         graphql(`{
             viewer {
                 ${pullRequestQueryPart}
-                ${repositoriesContributedTo}
+                ${repositoriesContributedToQueryPart}
+                ${repositoriesQueryPart}
             }
         }`, {
             headers: {
@@ -65,13 +67,18 @@ app.get('/', (req, res) => {
         }).then((data) => {
             console.log(util.inspect(data, { showHidden: true, depth: null }));
             req.user.pullRequests = _.map(data.viewer.pullRequests.edges, 'node');
-            req.user.repositories = _.map(data.viewer.repositoriesContributedTo.edges, (repository) => {
+            req.user.repositoriesContributedTo = _.map(data.viewer.repositoriesContributedTo.edges, (repositoryContributedTo) => {
+                return {
+                    name: repositoryContributedTo.node.name,
+                    commits: _.map(repositoryContributedTo.node.ref.target.history.edges, 'node.messageHeadline')
+                };
+            });
+            req.user.repositories = _.map(data.viewer.repositories.edges, (repository) => {
                 return {
                     name: repository.node.name,
                     commits: _.map(repository.node.ref.target.history.edges, 'node.messageHeadline')
                 };
             });
-
             res.json(req.user);
         });
     } else {
