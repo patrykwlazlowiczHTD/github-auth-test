@@ -74,7 +74,7 @@ app.get('/', (req, res) => {
                             ref(qualifiedName: "master") {
                                 target {
                                     ... on Commit {
-                                        history(first: 10) {
+                                        history(first: 100) {
                                             edges {
                                                 node {
                                                     messageHeadline
