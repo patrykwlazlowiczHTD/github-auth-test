@@ -51,10 +51,39 @@ app.get('/', (req, res) => {
     if (req.user) {
         graphql(`{
             viewer {
+                pullRequests(first: 100) {
+                    edges {
+                        node {
+                            title
+                            editor {
+                                login
+                            }
+                            bodyText
+                            createdAt
+                            publishedAt
+                            additions
+                            deletions
+                            changedFiles
+                        }
+                    }
+                }
                 repositories(first: 100) {
                     edges {
                         node {
                             name
+                            ref(qualifiedName: "master") {
+                                target {
+                                    ... on Commit {
+                                        history(first: 10) {
+                                            edges {
+                                                node {
+                                                    messageHeadline
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -63,8 +92,15 @@ app.get('/', (req, res) => {
             headers: {
                 authorization: `token ${req.user.token}`
             }
-        }).then((data) =>{
-            req.user.githubProfile.repositories = _.map(data.viewer.repositories.edges, 'node.name');
+        }).then((data) => {
+            req.user.pullRequests = _.map(data.viewer.pullRequests.edges, 'node');
+            req.user.repositories = _.map(data.viewer.repositories.edges, (repository) => {
+                return {
+                    name: repository.node.name,
+                    commits: _.map(repository.node.ref.target.history.edges, 'node.messageHeadline')
+                };
+            });
+
             res.json(req.user);
         });
     } else {
