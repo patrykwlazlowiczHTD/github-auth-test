@@ -7,6 +7,10 @@ const expressSession = require('express-session');
 const morgan = require('morgan');
 const _ = require('lodash');
 const graphql = require('@octokit/graphql');
+const util = require('util');
+
+const pullRequestQueryPart = require('./queries-part/pull-request');
+const repositoriesContributedTo = require('./queries-part/repositories-contributed-to');
 
 const app = express();
 app.use(morgan('dev'));
@@ -51,50 +55,17 @@ app.get('/', (req, res) => {
     if (req.user) {
         graphql(`{
             viewer {
-                pullRequests(first: 100) {
-                    edges {
-                        node {
-                            title
-                            editor {
-                                login
-                            }
-                            bodyText
-                            createdAt
-                            publishedAt
-                            additions
-                            deletions
-                            changedFiles
-                        }
-                    }
-                }
-                repositories(first: 100) {
-                    edges {
-                        node {
-                            name
-                            ref(qualifiedName: "master") {
-                                target {
-                                    ... on Commit {
-                                        history(first: 100) {
-                                            edges {
-                                                node {
-                                                    messageHeadline
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                ${pullRequestQueryPart}
+                ${repositoriesContributedTo}
             }
         }`, {
             headers: {
                 authorization: `token ${req.user.token}`
             }
         }).then((data) => {
+            console.log(util.inspect(data, { showHidden: true, depth: null }));
             req.user.pullRequests = _.map(data.viewer.pullRequests.edges, 'node');
-            req.user.repositories = _.map(data.viewer.repositories.edges, (repository) => {
+            req.user.repositories = _.map(data.viewer.repositoriesContributedTo.edges, (repository) => {
                 return {
                     name: repository.node.name,
                     commits: _.map(repository.node.ref.target.history.edges, 'node.messageHeadline')
